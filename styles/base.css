@@ -1,0 +1,74 @@
+/* LIVE — design tokens & base */
+
+:root {
+  --bg0: #07080b;
+  --bg1: #0b0d11;
+  --bg2: #12151b;
+  --bg3: #171a21;
+
+  --line: rgba(255, 255, 255, 0.06);
+  --line-2: rgba(255, 255, 255, 0.11);
+
+  --text-hi: #f2f5f8;
+  --text-mid: #9aa3af;
+  --text-low: #5b6370;
+
+  --accent: #59d2ff;
+  --accent-dim: rgba(89, 210, 255, 0.08);
+  --accent-line: rgba(89, 210, 255, 0.28);
+  --warn: #e3c078;
+
+  --radius: 16px;
+  --font: ui-sans-serif, -apple-system, "Segoe UI Variable Text", "Segoe UI",
+          Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+/* the hidden attribute must always win over component display values */
+[hidden] { display: none !important; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text-hi);
+  background:
+    radial-gradient(1100px 460px at 50% -12%, rgba(89, 210, 255, 0.05), transparent 62%),
+    var(--bg0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+::selection { background: rgba(89, 210, 255, 0.22); }
+
+button {
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-line);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

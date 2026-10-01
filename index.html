@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07080b">
+  <title>LIVE — writing, in real time</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='7' fill='%2359d2ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/page.css">
+</head>
+<body>
+  <div id="app">
+
+    <header class="topbar">
+      <div class="brand" aria-label="LIVE">LIVE<span class="brand-dot" aria-hidden="true"></span></div>
+
+      <div class="conv-meta">
+        <div class="conv-title" id="convTitle">LIVE</div>
+        <div class="conv-sub">
+          <span id="connDot" class="conn-dot" aria-hidden="true"></span>
+          <span id="connLabel">connecting…</span>
+          <span class="sub-sep" aria-hidden="true">·</span>
+          <span id="presenceLabel">1 window</span>
+        </div>
+      </div>
+
+      <div id="accountChip" class="account-chip" title="Signed-in account"></div>
+      <button id="logoutBtn" class="ghost-btn small" type="button" title="Log out">LOG OUT</button>
+    </header>
+
+    <main id="page" tabindex="-1">
+      <div id="entries" class="entries" aria-live="polite" aria-label="Conversation"></div>
+    </main>
+
+    <footer class="dock">
+      <div class="composer-card">
+        <div class="composer-top">
+          <div class="visibility" role="radiogroup" aria-label="Draft visibility">
+            <span class="visibility-label">Draft</span>
+            <button class="seg is-active" data-vis="LIVE" role="radio" aria-checked="true" type="button">LIVE</button>
+            <button class="seg" data-vis="PRIVATE" role="radio" aria-checked="false" type="button">PRIVATE</button>
+            <button class="seg" data-vis="OFF" role="radio" aria-checked="false" type="button">OFF</button>
+          </div>
+          <div class="composer-hint">Ctrl+Enter send&nbsp;&nbsp;·&nbsp;&nbsp;Esc discard</div>
+        </div>
+
+        <div class="composer-main">
+          <button id="plusBtn" class="icon-btn" type="button" title="Attachments — later phase" aria-label="More">+</button>
+          <textarea id="composerInput" rows="1" placeholder="Write here…" aria-label="Message draft" spellcheck="true"></textarea>
+          <button id="sendBtn" class="send-btn" type="button" disabled>SEND</button>
+        </div>
+      </div>
+
+      <nav class="bottomnav" aria-label="Sections">
+        <button class="nav-item is-active" data-nav="LIVE" type="button">LIVE</button>
+        <button class="nav-item" data-nav="ROOMS" type="button">FIND</button>
+        <button class="nav-item" data-nav="ALERTS" type="button">ALERTS</button>
+        <button class="nav-item" data-nav="YOU" type="button">YOU</button>
+      </nav>
+    </footer>
+
+    <div id="roomsOverlay" class="overlay" hidden>
+      <div class="panel panel-wide" role="dialog" aria-modal="true" aria-labelledby="roomsTitle">
+        <div class="panel-head">
+          <span class="panel-title" id="roomsTitle">Find people</span>
+          <button id="roomsClose" class="icon-btn small" type="button" aria-label="Close find people">×</button>
+        </div>
+        <div class="field">
+          <input id="peopleSearch" placeholder="Exact username…" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="people-list" id="peopleList"></div>
+        <p class="panel-note">No one is listed here — ever. Search an exact username, send a chat request, and it's up to them to accept. Until then you can't see their name or write to them.</p>
+      </div>
+    </div>
+
+    <div id="alertsOverlay" class="overlay" hidden>
+      <div class="panel panel-wide" role="dialog" aria-modal="true" aria-labelledby="alertsTitle">
+        <div class="panel-head">
+          <span class="panel-title" id="alertsTitle">Notifications</span>
+          <button id="alertsClose" class="icon-btn small" type="button" aria-label="Close notifications">×</button>
+        </div>
+        <div class="people-list" id="alertsList"></div>
+      </div>
+    </div>
+
+    <div id="authOverlay" class="overlay auth" hidden>
+      <div class="auth-card">
+        <div class="auth-brand">LIVE<span class="brand-dot" aria-hidden="true"></span></div>
+        <p class="auth-tag">Writing, in real time.</p>
+        <div class="auth-tabs">
+          <button id="authTabIn" class="seg is-active" type="button">LOG IN</button>
+          <button id="authTabUp" class="seg" type="button">SIGN UP</button>
+        </div>
+        <label class="field">
+          <span>Username</span>
+          <input id="authUsername" autocomplete="username" placeholder="e.g. brian" maxlength="20">
+        </label>
+        <label class="field" id="authNameField" hidden>
+          <span>Display name</span>
+          <input id="authName" placeholder="How others see you" maxlength="24">
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••">
+        </label>
+        <div class="auth-error" id="authError" role="alert"></div>
+        <button id="authSubmit" class="send-btn auth-submit" type="button">LOG IN</button>
+        <p class="panel-note">Accounts live on the LIVE server — sign in from any device with the same username. Open a second window or another device, sign in as someone else, and write together in real time.</p>
+      </div>
+    </div>
+
+    <div id="profileOverlay" class="overlay" hidden>
+      <div class="panel profile-panel" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+        <div class="profile-hero" id="profileHero">
+          <button id="profileClose" class="icon-btn small on-hero" type="button" aria-label="Close profile">×</button>
+          <div class="profile-avatar" id="profileAvatar"></div>
+          <div class="profile-name-big" id="profileNamePreview">—</div>
+          <div class="profile-handle" id="profileHandlePreview">@—</div>
+        </div>
+        <div class="profile-body">
+          <label class="field">
+            <span>Display name</span>
+            <input id="profileName" maxlength="24" placeholder="Your name" autocomplete="off">
+          </label>
+          <div class="field">
+            <span>Accent</span>
+            <div class="swatches" id="profileSwatches"></div>
+          </div>
+          <div class="panel-actions">
+            <button id="profileNew" class="ghost-btn" type="button">Add another person</button>
+            <span class="spacer"></span>
+            <button id="profileSave" class="send-btn" type="button">SAVE</button>
+          </div>
+          <p class="profile-meta" id="profileMeta"></p>
+          <p class="panel-note">Your name and accent are visible only to people you've accepted. Everything else about you stays off the record until Phase 2's identity system.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

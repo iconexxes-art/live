@@ -1,0 +1,7 @@
+node_modules/
+.env
+/data/sessions.json
+/data/accounts.json
+/data/conversations.json
+/data/conv-meta.json
+/data/requests.json

@@ -1,0 +1,14 @@
+{
+  "name": "live-prototype",
+  "version": "0.14.0",
+  "private": true,
+  "type": "module",
+  "description": "LIVE \u2014 realtime communication built around Live Writing",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/security.test.mjs test/realtime.test.mjs test/distributed.test.mjs test/storage.test.mjs test/ops.test.mjs test/crypto.test.mjs test/ratchet.test.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}

@@ -1,0 +1,319 @@
+/* LIVE — the living page: entries, live drafts, ink, cursor */
+
+.entries {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 30px 20px 44px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Entry shell: bubbles on a page ---------- */
+
+/* Entries are spaced by margin (not container gap) so a dissolving entry can
+   hand its space back to the page in one continuous motion. */
+.entry {
+  position: relative;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.entry.mine { align-items: flex-end; }
+
+.entry-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  min-height: 26px;
+}
+
+/* own entries: the name row collapses to just status chips, right-aligned */
+.entry.mine .entry-head { justify-content: flex-end; }
+.entry.mine .entry-head .avatar,
+.entry.mine .entry-head .entry-author { display: none; }
+.entry.committed.mine .entry-head { display: none; }
+
+.avatar {
+  display: inline-flex;
+  flex: none;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.avatar svg { display: block; width: 100%; height: 100%; }
+
+.entry-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+  letter-spacing: 0.01em;
+}
+
+.entry-time {
+  font-size: 11px;
+  color: var(--text-low);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  transition: opacity 0.45s ease;
+}
+
+.chip.live {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-line);
+}
+
+.chip.private {
+  color: var(--warn);
+  background: rgba(227, 192, 120, 0.08);
+  border: 1px solid rgba(227, 192, 120, 0.24);
+}
+
+.chip.fade-out { opacity: 0; }
+
+.pause-note {
+  font-size: 11px;
+  color: var(--text-low);
+  font-style: italic;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.entry.is-paused .pause-note { opacity: 1; }
+
+/* ---------- Text ---------- */
+
+.entry-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-hi);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.entry-foot {
+  margin-top: 6px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-low);
+  opacity: 0;
+  transition: opacity 0.5s ease 0.15s;
+}
+
+.entry-foot.reveal { opacity: 1; }
+
+/* ---------- The bubble ---------- */
+
+.entry-body {
+  max-width: min(78%, 560px);
+  padding: 10px 15px 11px;
+  border-radius: 18px;
+  transition: background 0.5s ease, border-color 0.5s ease, border-radius 0.45s ease;
+}
+
+/* received — quiet charcoal */
+.entry.theirs .entry-body {
+  background: #161a21;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-bottom-left-radius: 6px;
+}
+
+/* sent — cyan-tinted, still restrained */
+.entry.mine .entry-body {
+  background: linear-gradient(180deg, rgba(89, 210, 255, 0.16), rgba(89, 210, 255, 0.09));
+  border: 1px solid rgba(89, 210, 255, 0.24);
+  border-bottom-right-radius: 6px;
+}
+
+/* live drafts: unfinished ink — no tail corner yet, faint outline */
+.entry.draft .entry-body {
+  background: rgba(255, 255, 255, 0.028);
+  border: 1px solid rgba(89, 210, 255, 0.3);
+  border-radius: 18px;
+}
+
+.entry.draft .entry-text { color: #e9edf3; }
+
+/* send: the draft dries into its final bubble (color transition + settle pop) */
+.entry.is-committed .entry-body { animation: bubble-settle 0.5s cubic-bezier(0.2, 0.7, 0.3, 1); }
+
+.entry.is-committed.mine .entry-body {
+  background: linear-gradient(180deg, rgba(89, 210, 255, 0.16), rgba(89, 210, 255, 0.09));
+  border-color: rgba(89, 210, 255, 0.24);
+  border-bottom-right-radius: 6px;
+}
+
+.entry.is-committed.theirs .entry-body {
+  background: #161a21;
+  border-color: rgba(255, 255, 255, 0.055);
+  border-bottom-left-radius: 6px;
+}
+
+@keyframes bubble-settle {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- Private (remote) ghost ---------- */
+
+.ghost-line {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-low);
+  font-size: 13.5px;
+  font-style: italic;
+}
+
+.ghost-dots { display: inline-flex; gap: 3px; margin-left: 2px; }
+
+.ghost-dots i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-low);
+  animation: dot-pulse 1.5s ease-in-out infinite;
+}
+
+.ghost-dots i:nth-child(2) { animation-delay: 0.22s; }
+.ghost-dots i:nth-child(3) { animation-delay: 0.44s; }
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.25; }
+  45%      { opacity: 0.95; }
+}
+
+.entry.is-ghost { padding: 0; }
+.entry.is-ghost .entry-body,
+.entry.is-ghost .entry-foot { display: none; }
+.entry.is-ghost .ghost-line {
+  display: flex;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 15px;
+}
+
+/* ---------- Live cursor ---------- */
+
+.live-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.02em;
+  margin-left: 2.5px;
+  vertical-align: -0.16em;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: cursor-breathe 1.5s ease-in-out infinite;
+  transition: opacity 0.35s ease, width 0.35s ease, margin 0.35s ease;
+}
+
+.entry.is-paused .live-cursor {
+  animation-duration: 3.6s;
+  opacity: 0.45;
+}
+
+.live-cursor.cursor-off {
+  width: 0;
+  margin-left: 0;
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes cursor-breathe {
+  0%, 100% { opacity: 0.25; transform: scaleY(0.8); }
+  50%      { opacity: 0.95; transform: scaleY(1); }
+}
+
+/* ---------- Living ink ---------- */
+
+.ink-in {
+  animation: ink-in 0.26s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes ink-in {
+  from { opacity: 0; filter: blur(4px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+.ink-out {
+  animation: ink-out 0.18s ease both;
+}
+
+@keyframes ink-out {
+  to { opacity: 0; filter: blur(3px); }
+}
+
+/* ---------- Entry enter / leave ---------- */
+
+.entry.enter { animation: entry-in 0.38s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+@keyframes entry-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  60%  { transform: translateY(-1px) scale(1.002); }
+  to   { opacity: 1; transform: none; }
+}
+
+.entry.enter .avatar { animation: avatar-pop 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+
+@keyframes avatar-pop {
+  from { transform: scale(0.5); }
+  to   { transform: scale(1); }
+}
+
+/* ---------- Ephemeral messages: the dissolve ---------- */
+
+/* Stage 1 — the ink starts letting go of the page during the final seconds. */
+@keyframes expiring-drift {
+  from { opacity: 1; filter: blur(0); }
+  to   { opacity: 0.42; filter: blur(0.9px); }
+}
+
+.entry.expiring {
+  animation: expiring-drift 2.4s ease-in forwards;
+}
+
+/* Stage 2 — full dissolution: fade + blur + a seamless height/margin/padding
+   collapse so the remaining page glides shut with no reflow jump. Height and
+   margin are pinned to their measured values inline just before this runs. */
+@keyframes entry-dissolve {
+  to {
+    opacity: 0;
+    filter: blur(3px);
+    height: 0px;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-width: 0px;
+    transform: translateY(5px);
+  }
+}
+
+.entry.leaving {
+  animation: entry-dissolve 0.62s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 640px) {
+  .entries { padding: 22px 14px 32px; }
+  .entry { margin-bottom: 22px; }
+  .entry-text { font-size: 15px; }
+  .entry-body { max-width: 86%; padding: 9px 13px 10px; }
+}
